@@ -32,8 +32,9 @@ paths:
 | Isaac | deferred | not pinned; later PR |
 
 ## Claude plugins (.claude/settings.json, usage: .claude/rules/claude-tooling.md)
-- claude-plugins-official (anthropics/claude-plugins-official): superpowers, pyright-lsp, claude-md-management.
+- claude-plugins-official (anthropics/claude-plugins-official): superpowers, pyright-lsp, claude-md-management, code-simplifier (agent only, no hooks).
 - ros2-engineering@ros2-engineering-skills: ref v1.7.2.
 - asd-ste100@asd-ste100-skill: ref master (upstream has no tags).
 - ros2-sim (BaraaLazkani/ros2-sim-skill v1.0.0): loose SKILL.md, no plugin manifest. Copy at the tag in the sim-gz PR (claude-tooling.md).
+- caveman@caveman: github JuliusBrussee/caveman, ref v4.1.0 (tag 1e91f1306d602d4ca23618701b1185575ae1869b; Apache-2.0 + MIT). Skills: caveman (terse chat replies), caveman-commit, caveman-review, caveman-compress, cavecrew agents. Hooks: SessionStart, SubagentStart, UserPromptSubmit and SessionEnd. They run `node` and do nothing when node is not on PATH. They write mode and stats files under `~/.claude` only. They do not use the network (read 2026-11-11). The default mode is `caveman`. To change it, set `CAVEMAN_DEFAULT_MODE=off`.
 - To bump a plugin, change the ref to a tag. Never track a moving branch when a tag exists.
