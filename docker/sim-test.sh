@@ -3,7 +3,7 @@
 # Discovery is limited to src/: /ws/pkgxml holds copies of each package.xml for the runtime
 # stage, and colcon stops with "Duplicate package names" if it sees them.
 # Only the rccar_sim_* packages are tested. The car CI tests the car packages.
-# The script fails if colcon test fails, if a test fails, or if no test ran.
+# The script fails if colcon test fails, if a test fails, if no test ran or if a test skipped.
 # If /out is mounted, log/ and the xml test results are copied there (CI artifact);
 # HOST_UID/HOST_GID (optional) chown them back to the invoking user.
 set +e
@@ -19,6 +19,11 @@ if [ "$rc_test" -ne 0 ]; then
 fi
 if echo "$summary" | grep -q '^Summary: 0 tests'; then
   echo "ERROR: no test ran"
+  rc=1
+fi
+# A skip hides a parity gate (golden, drift: car repo or g++ missing). SIM_TEST_ALLOW_SKIP=1 permits it.
+if [ "${SIM_TEST_ALLOW_SKIP:-0}" != "1" ] && ! echo "$summary" | grep -q '^Summary: .* 0 skipped'; then
+  echo "ERROR: a test skipped (set SIM_TEST_ALLOW_SKIP=1 to permit)"
   rc=1
 fi
 if [ -d /out ]; then

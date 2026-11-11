@@ -18,7 +18,7 @@ RANGE_TOPIC = '/rccar/rangefinder/range'
 RANGE_FRAME = 'rangefinder_link'
 
 BEST_EFFORT_1 = QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT)
-BEST_EFFORT_10 = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)
+SENSOR_QOS = QoSProfile(depth=5, reliability=ReliabilityPolicy.BEST_EFFORT)
 EVENT_QOS = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
 
 
@@ -31,14 +31,16 @@ class RccarMcu(Node):
             'fault_drop_ms', 1000,
             ParameterDescriptor(
                 description='Fault drop_drive. Ignore drive messages for this many ms.'))
-        self._model = McuModel(self._now_ms())
+        # The model clock is ms since boot, like esp_timer on the firmware.
+        self._boot_ms = self._now_ms()
+        self._model = McuModel(0)
         self._drop_until_ms = -1
 
         self.create_subscription(rm.DriveCmd, DRIVE_TOPIC, self._on_drive, BEST_EFFORT_1)
         self.create_service(McuCommand, COMMAND_TOPIC, self._on_command)
         self._event_pub = self.create_publisher(rm.McuEvent, EVENT_TOPIC, EVENT_QOS)
-        self._tel_pub = self.create_publisher(rm.Telemetry, TELEMETRY_TOPIC, BEST_EFFORT_10)
-        self._range_pub = self.create_publisher(Range, RANGE_TOPIC, BEST_EFFORT_10)
+        self._tel_pub = self.create_publisher(rm.Telemetry, TELEMETRY_TOPIC, SENSOR_QOS)
+        self._range_pub = self.create_publisher(Range, RANGE_TOPIC, SENSOR_QOS)
         # Sim-only fault services. They stay in the private namespace.
         self.create_service(Trigger, '~/fault_drop_drive', self._on_fault_drop)
         self.create_service(Trigger, '~/fault_reboot', self._on_fault_reboot)
@@ -51,11 +53,16 @@ class RccarMcu(Node):
         self._range_ms = 0
         self._retime()
         self.create_timer(0.05, self._retime)  # picks up SET control_hz, TEL and rf_period_ms
+        # READY goes out on the first tick. The bridge may miss it (volatile). The bridge also
+        # pushes tuning from its startup timer (bridge_node.py:179), like the firmware on connect.
         self.get_logger().info('virtual ESP32 up: disarmed, READY queued')
 
     # -- time ---------------------------------------------------------------
     def _now_ms(self) -> int:
         return self.get_clock().now().nanoseconds // 1_000_000
+
+    def _mcu_ms(self) -> int:
+        return self._now_ms() - self._boot_ms
 
     def _stamp(self):
         return self.get_clock().now().to_msg()
@@ -84,7 +91,7 @@ class RccarMcu(Node):
                 self._range_timer = self.create_timer(self._range_ms / 1000.0, self._on_range)
 
     def _on_control(self):
-        self._model.step(self._now_ms())
+        self._model.step(self._mcu_ms())
         self._publish_events()
 
     def _publish_events(self):
@@ -96,8 +103,7 @@ class RccarMcu(Node):
             self._event_pub.publish(msg)
 
     def _on_telemetry(self):
-        now = self._now_ms()
-        t = self._model.telemetry(now)
+        t = self._model.telemetry(self._mcu_ms())
         msg = rm.Telemetry()
         msg.stamp = self._stamp() if t.time_synced else msg.stamp
         msg.mcu_ms = t.mcu_ms
@@ -124,27 +130,28 @@ class RccarMcu(Node):
 
     # -- inputs -------------------------------------------------------------
     def _on_drive(self, msg):
-        now = self._now_ms()
+        now = self._mcu_ms()
         if now < self._drop_until_ms:
             return
         self._model.on_drive(msg.heading_rad, msg.throttle, now)
 
     def _on_command(self, request, response):
-        response.ok, response.reply = self._model.service_command(request.command, self._now_ms())
+        response.ok, response.reply = self._model.service_command(request.command, self._mcu_ms())
         self._retime()
         self._publish_events()
         return response
 
     def _on_fault_drop(self, request, response):
         ms = int(self.get_parameter('fault_drop_ms').value)
-        self._drop_until_ms = self._now_ms() + ms
+        self._drop_until_ms = self._mcu_ms() + ms
         response.success = True
         response.message = f'dropping drive messages for {ms} ms'
         self.get_logger().warning(response.message)
         return response
 
     def _on_fault_reboot(self, request, response):
-        self._model.reboot(self._now_ms())
+        self._boot_ms = self._now_ms()  # esp_timer restarts at boot
+        self._model.reboot(0)
         self._drop_until_ms = -1
         self._retime()
         self._publish_events()

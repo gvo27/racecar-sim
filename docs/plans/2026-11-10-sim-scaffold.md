@@ -9,7 +9,7 @@ This file is the plan and the handoff record. The work started in a Claude Code 
 | 1 | car `sim-contract` | `lidar` | PR gvo27/racecar#9. CI green (colcon 320 tests, 0 failures; `make unit` 125 passed). Head c483e39 |
 | 2 | car `dev-lsp` | `main` | not started. Do it in the car repo |
 | 3 | sim `main` | — | pushed (README, .gitignore; no LICENSE, because the car repo has none) |
-| 4 | sim `scaffold` | `main` | merged: PR gvo27/racecar-sim#1 (main 6746bb3). CI was green (pin check 13 passed, unit 40 passed, colcon 0 tests: expected) |
+| 4 | sim `scaffold` | `main` | merged: PR gvo27/racecar-sim#1 (main 6746bb3). CI was green (pin check 13 passed, unit 40 passed, colcon 0 tests). Correction: colcon test stopped on duplicate package names and `sim-test.sh` ignored the error. The `sim-mcu` PR fixes the script |
 | 5 | sim `sim-mcu` | `main` | in progress (PR to be opened). Plan: `docs/plans/2026-11-11-sim-mcu.md` |
 | 6–9 | sim `sim-mapper`, `sim-gz` (Gazebo), `gym` (f1tenth_gym), `racing` | `main` | not started. Each is a separate PR |
 

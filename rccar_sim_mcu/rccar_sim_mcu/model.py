@@ -341,12 +341,13 @@ class McuModel:
     def __init__(self, now_ms: int = 0) -> None:
         self.cfg = Config()
         self._nvs: Config | None = None  # what SAVE stored
-        # Rangefinder sample for the SENS command. The node may set these.
-        self.rf_present = False
-        self.rf_raw = 0
+        # Rangefinder stub sample: a present sensor with a no-return reading. SENS and
+        # range_m() both read it. The node may set these.
+        self.rf_present = True
+        self.rf_raw = self.cfg.rf_no_return_raw
         self.rf_status = 0
-        self.rf_stamp_ms = 0
-        self.rf_seq = 0
+        self.rf_stamp_ms = now_ms
+        self.rf_seq = 1
         self.time_synced = True
         self._events: list[tuple[int, str]] = []
         self._boot(now_ms)
@@ -386,8 +387,10 @@ class McuModel:
         return self._tel_hz
 
     def range_m(self) -> float:
-        """Range for /rccar/rangefinder/range. Stub: no return, so +inf."""
-        return math.inf
+        """Range for /rccar/rangefinder/range, from the sample (main.cpp:745)."""
+        if self.rf_raw == self.cfg.rf_no_return_raw:
+            return math.inf
+        return self.rf_raw * self.cfg.rf_scale_m
 
     # -- inputs -------------------------------------------------------------
     def on_drive(self, heading_rad: float, throttle: float, now_ms: int) -> None:

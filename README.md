@@ -11,10 +11,10 @@ The car nodes (supervisor, mcu_bridge, drivers) run without changes. The boundar
 The car repo is pinned in `repos/racecar.repos` ([`repos/README.md`](repos/README.md)).
 
 ## Virtual ESP32
-Package `rccar_sim_mcu`, node `rccar_mcu`, launch file `ros2 launch rccar_sim_mcu sim_mcu.launch.py` (planned interface; not verified):
+Package `rccar_sim_mcu`, node `rccar_mcu`, launch file `ros2 launch rccar_sim_mcu sim_mcu.launch.py`. Run the tests with `make sim-test`:
 - Subscribes `/rccar/mcu/drive` (DriveCmd, best_effort). Only the car supervisor publishes it.
 - Serves `/rccar/mcu/command` (McuCommand) with the firmware `handleLine` grammar.
-- Publishes `/rccar/mcu/event` (reliable, depth 10), `/rccar/mcu/telemetry` (best_effort, 10 Hz) and `/rccar/rangefinder/range` (best_effort, `+inf` stub, frame `rangefinder_link`).
+- Publishes `/rccar/mcu/event` (reliable, depth 10), `/rccar/mcu/telemetry` (best_effort, depth 5, 10 Hz) and `/rccar/rangefinder/range` (best_effort, depth 5, `+inf` stub, frame `rangefinder_link`).
 - Sim-only fault services `/rccar_mcu/fault_drop_drive` and `/rccar_mcu/fault_reboot`. They are outside `/rccar/`.
 
 Safety checks for tests and policies: skill `sim-safety-check`.

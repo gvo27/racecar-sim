@@ -17,12 +17,15 @@ from std_srvs.srv import Trigger
 from mcu_harness import Harness, TUNING
 
 
+DROP_MS = 1500
+
+
 @pytest.mark.launch_test
 def generate_test_description():
     car = os.path.join(get_package_share_directory('rccar_bringup'), 'launch', 'car.launch.py')
     return launch.LaunchDescription([
         Node(package='rccar_sim_mcu', executable='rccar_mcu_sim', name='rccar_mcu',
-             output='screen', parameters=[{'fault_drop_ms': 1500}]),
+             output='screen', parameters=[{'fault_drop_ms': DROP_MS}]),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(car),
             launch_arguments={'sim': 'true', 'use_sim_time': 'false',
@@ -33,7 +36,7 @@ def generate_test_description():
 
 
 class TestFailsafe(unittest.TestCase):
-    """Cases run in name order (a_, b_). The second case needs the first one done."""
+    """Case b does not depend on case a: _ready() and _arm() set up the state."""
 
     @classmethod
     def setUpClass(cls):
@@ -80,8 +83,9 @@ class TestFailsafe(unittest.TestCase):
     def test_b_reboot_latches_and_repushes_tuning(self):
         h = self.h
         self._ready()
-        # wait until the drop window of case a ends, then re-arm with the new incident
-        h.spin(2.0, neutral=True)
+        # Case a may have run before: wait until its drop window is over. Telemetry
+        # shows the drive input again (not disarmed by a stale command) when it is over.
+        h.spin((DROP_MS + 500) / 1000.0, neutral=True)
         self._arm()
         incident = h.state.incident
         h.events.clear()

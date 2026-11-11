@@ -50,6 +50,7 @@ class TestTuningPush(unittest.TestCase):
         h.spin(1.5)
         self.assertFalse(h.tel.armed, 'bridge must never arm')
         self.assertTrue(h.tel.time_synced)
+        self.assertLess(h.tel.mcu_ms, 600_000, 'mcu_ms must be ms since boot, not epoch')
 
     def test_only_supervisor_publishes_drive(self):
         h = self.h

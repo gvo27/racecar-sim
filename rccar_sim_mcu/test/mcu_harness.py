@@ -84,6 +84,7 @@ class Harness:
 
     def arm(self):
         """Neutral admin, then Reset with the current incident. Return the response."""
+        self.events.clear()
         self.spin(1.0, neutral=True)
         req = Reset.Request()
         req.incident = self.state.incident

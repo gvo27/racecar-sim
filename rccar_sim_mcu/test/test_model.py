@@ -217,9 +217,13 @@ def test_reverse_zero_stays_then_direct():
     assert tick(m, 1310, 0.0).throttle_us == 1500
     assert m.reverse_state == RevState.REVERSE
     assert tick(m, 1320, -1.0).throttle_us == 1000  # no brake again
-    assert tick(m, 1330, 1.0).throttle_us == 2000
+    # Slew step is 1.0 per tick: -1 -> 0 (u == 0 stays in REVERSE) -> +1.
+    assert tick(m, 1330, 1.0).throttle_us == 1500
+    assert m.reverse_state == RevState.REVERSE
+    assert tick(m, 1340, 1.0).throttle_us == 2000
     assert m.reverse_state == RevState.FORWARD
-    assert tick(m, 1340, -1.0).throttle_us == 1250
+    assert tick(m, 1350, -1.0).throttle_us == 1500  # slew back to 0
+    assert tick(m, 1360, -1.0).throttle_us == 1250  # brake again
 
 
 def test_back_to_forward_from_brake_and_gap():
@@ -400,9 +404,10 @@ def test_tel():
 
 def test_sens():
     m = McuModel()
-    exp = ('SENS rangefinder present=0 driver=1 addr=0x62 period_ms=20 scale_m=0.0100 '
-           'no_return=1 min_m=0.05 max_m=10.00 fov_rad=0.0833 radiation=1 raw=0 '
-           'range_m=nan status=0x00 age_ms=0 seq=0\n')
+    # Stub sample: a present sensor with no return (raw = no_return), stamped at boot.
+    exp = ('SENS rangefinder present=1 driver=1 addr=0x62 period_ms=20 scale_m=0.0100 '
+           'no_return=1 min_m=0.05 max_m=10.00 fov_rad=0.0833 radiation=1 raw=1 '
+           'range_m=inf status=0x00 age_ms=1 seq=1\n')
     assert m.handle_line('SENS rangefinder', 1) == exp
     assert m.handle_line('SENS', 1) == 'ERR SENS ? not implemented\n'
     assert m.handle_line('SENS foo', 1) == 'ERR SENS foo not implemented\n'
