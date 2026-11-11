@@ -54,8 +54,13 @@ class TestTuningPush(unittest.TestCase):
 
     def test_only_supervisor_publishes_drive(self):
         h = self.h
+
+        def names():
+            return {i.node_name for i in h.node.get_publishers_info_by_topic('/rccar/mcu/drive')}
+
+        # Discovery can show an endpoint before its node name (_NODE_NAME_UNKNOWN_). Wait for it.
         self.assertTrue(h.wait_for(
-            lambda: len(h.node.get_publishers_info_by_topic('/rccar/mcu/drive')) > 0,
-            timeout=30.0), 'no drive publisher')
-        names = {i.node_name for i in h.node.get_publishers_info_by_topic('/rccar/mcu/drive')}
-        self.assertEqual(names, {'supervisor'})
+            lambda: names() and '_NODE_NAME_UNKNOWN_' not in names(),
+            timeout=30.0), f'no named drive publisher: {names()}')
+        found = names()
+        self.assertEqual(found, {'supervisor'})
