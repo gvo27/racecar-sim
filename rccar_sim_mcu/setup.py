@@ -9,6 +9,7 @@ setup(
     data_files=[
         ('share/ament_index/resource_index/packages', ['resource/rccar_sim_mcu']),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', ['launch/sim_mcu.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -18,6 +19,6 @@ setup(
     license='MIT',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [],
+        'console_scripts': ['rccar_mcu_sim = rccar_sim_mcu.node:main'],
     },
 )
