@@ -1,0 +1,7 @@
+{
+  "include": ["tests", "tools"],
+  "exclude": ["**/__pycache__", "build", "runs", "data", "src"],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning"
+}

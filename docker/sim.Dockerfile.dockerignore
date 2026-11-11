@@ -1,0 +1,17 @@
+# build context = repo root; keep only what docker/sim.Dockerfile COPYs
+.git
+.github
+.claude
+.cache
+.pytest_cache
+**/__pycache__
+docs
+tests
+tools
+runs
+data
+.env
+build
+install
+log
+src

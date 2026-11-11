@@ -1,0 +1,60 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(make car-up*)",
+      "Bash(make drivers-start*)",
+      "Bash(make flash*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/sim_guard.py\""
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "ros2-engineering@ros2-engineering-skills": true,
+    "asd-ste100@asd-ste100-skill": true,
+    "code-simplifier@claude-plugins-official": true,
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "ros2-engineering-skills": {
+      "source": {
+        "source": "github",
+        "repo": "dbwls99706/ros2-engineering-skills",
+        "ref": "v1.7.2"
+      }
+    },
+    "asd-ste100-skill": {
+      "source": {
+        "source": "github",
+        "repo": "danyuchn/asd-ste100-skill",
+        "ref": "master"
+      }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman",
+        "ref": "v4.1.0"
+      }
+    }
+  }
+}
