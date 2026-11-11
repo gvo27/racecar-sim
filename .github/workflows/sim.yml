@@ -1,0 +1,84 @@
+name: sim
+
+# Sim images, colcon test, pin check, unit tests (tests/). No GPU, no hardware.
+on:
+  push:
+    paths:
+      - "docker/**"
+      - "repos/**"
+      - "tests/**"
+      - "tools/**"
+      - "rccar_*/**"
+      - "Makefile"
+      - "pyrightconfig.json"
+      - "ruff.toml"
+      - ".claude/**"
+      - ".github/workflows/sim.yml"
+  pull_request:
+    paths:
+      - "docker/**"
+      - "repos/**"
+      - "tests/**"
+      - "tools/**"
+      - "rccar_*/**"
+      - "Makefile"
+      - "pyrightconfig.json"
+      - "ruff.toml"
+      - ".claude/**"
+      - ".github/workflows/sim.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      # test stage = builder (vcs import + rosdep + colcon build) + colcon test entrypoint
+      - name: Build sim test image (amd64, gha cache)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/sim.Dockerfile
+          target: test
+          load: true
+          tags: rccar-sim-test:local
+          cache-from: type=gha,scope=sim
+          cache-to: type=gha,scope=sim,mode=max
+
+      # builder stage is tagged for the dev image; it shares the layers above
+      - name: Build sim builder image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/sim.Dockerfile
+          target: builder
+          load: true
+          tags: rccar-sim-builder:local
+          cache-from: type=gha,scope=sim
+          cache-to: type=gha,scope=sim,mode=max
+
+      - name: Build dev image
+        run: make dev-image
+
+      - name: colcon test
+        run: make sim-test-run
+
+      - name: Pin check
+        run: make pin-check
+
+      # tests/ includes the rules test (paths: globs) and the sim_guard hook test
+      - name: Unit tests
+        run: make unit
+
+      - name: Upload log/ and test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sim-test-results
+          path: build/sim-test
+          if-no-files-found: warn

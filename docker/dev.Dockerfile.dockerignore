@@ -1,0 +1,11 @@
+# dev image needs only docker/entrypoint.sh
+.git
+.github
+.claude
+.env
+runs
+data
+build
+install
+log
+src

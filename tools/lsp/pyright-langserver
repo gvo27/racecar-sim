@@ -1,0 +1,6 @@
+#!/bin/sh
+# LSP shim: run pyright-langserver in the dev image. Install: make lsp (symlink in ~/.local/bin).
+# The repo is mounted at the same absolute path, so file URIs match. Notes: .claude/rules/claude-tooling.md
+SELF=$(readlink -f "$0")
+REPO=$(cd "$(dirname "$SELF")/../.." && pwd -P)
+exec docker run -i --rm --user "$(id -u):$(id -g)" -v "$REPO":"$REPO":ro -w "$PWD" rccar-sim-dev:local /entrypoint.sh pyright-langserver "$@"
