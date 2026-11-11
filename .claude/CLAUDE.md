@@ -3,6 +3,7 @@ scope: sim + training; the car repo (gvo27/racecar) is pinned through repos/race
 hosts: {train: win11 rtx5070ti wsl2 + docker desktop, staging: linux server (cpu-only checks, no training), isaac: later PR}
 contract: car docs/sensor_contract.md (pinned SHA in repos/racecar.repos); sim publishes the same topics, types, frames, qos
 phase: scaffold (images, make, ci, docs); next: sim-mcu, sim-mapper, sim-gz, gym, racing
+plan: docs/plans/2026-11-10-sim-scaffold.md  # approved plan + handoff status: PR split, open items, facts for sim-mcu
 stack: {ros: jazzy (ros:jazzy-ros-base by digest), gz: harmonic via ros-jazzy-ros-gz, dds: fast dds 2.14.7, images: [rccar-sim, rccar-sim-dev, rccar-gym (gym PR)]}
 cmd: make help
 hooks: .claude/hooks/sim_guard.py  # PreToolUse: denies the real Mapper 192.168.11.1; asks before make car-up|drivers-start|flash
