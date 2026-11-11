@@ -35,5 +35,5 @@ paths:
 - claude-plugins-official (anthropics/claude-plugins-official): superpowers, pyright-lsp, claude-md-management.
 - ros2-engineering@ros2-engineering-skills: ref v1.7.2.
 - asd-ste100@asd-ste100-skill: ref master (upstream has no tags).
-- ros2-sim@ros2-sim-skill: ref v1.0.0, disabled until reviewed.
+- ros2-sim (BaraaLazkani/ros2-sim-skill v1.0.0): loose SKILL.md, no plugin manifest. Copy at the tag in the sim-gz PR (claude-tooling.md).
 - To bump a plugin, change the ref to a tag. Never track a moving branch when a tag exists.

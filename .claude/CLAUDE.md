@@ -6,7 +6,7 @@ phase: scaffold (images, make, ci, docs); next: sim-mcu, sim-mapper, sim-gz, gym
 stack: {ros: jazzy (ros:jazzy-ros-base by digest), gz: harmonic via ros-jazzy-ros-gz, dds: fast dds 2.14.7, images: [rccar-sim, rccar-sim-dev, rccar-gym (gym PR)]}
 cmd: make help
 hooks: .claude/hooks/sim_guard.py  # PreToolUse: denies the real Mapper 192.168.11.1; asks before make car-up|drivers-start|flash
-plugins: .claude/settings.json  # superpowers, pyright-lsp, claude-md-management, ros2-engineering, asd-ste100; ros2-sim disabled until reviewed
+plugins: .claude/settings.json  # superpowers, pyright-lsp, claude-md-management, ros2-engineering, asd-ste100; ros2-sim = loose skill, copied in the sim-gz PR
 rules: .claude/rules/{writing,claude-tooling,dependencies,sim,wsl}.md  # path-scoped, see paths: frontmatter
 agents: .claude/agents/sim-reviewer.md
 layout: .claude/layout.yaml

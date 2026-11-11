@@ -8,9 +8,6 @@
     },
     "asd-ste100-skill": {
       "source": { "source": "github", "repo": "danyuchn/asd-ste100-skill", "ref": "master" }
-    },
-    "ros2-sim-skill": {
-      "source": { "source": "github", "repo": "BaraaLazkani/ros2-sim-skill", "ref": "v1.0.0" }
     }
   },
   "enabledPlugins": {
@@ -18,8 +15,7 @@
     "pyright-lsp@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "ros2-engineering@ros2-engineering-skills": true,
-    "asd-ste100@asd-ste100-skill": true,
-    "ros2-sim@ros2-sim-skill": false
+    "asd-ste100@asd-ste100-skill": true
   },
   "hooks": {
     "PreToolUse": [

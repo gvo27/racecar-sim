@@ -14,7 +14,7 @@ paths:
 - superpowers, pyright-lsp, claude-md-management: from `claude-plugins-official`.
 - ros2-engineering @ v1.7.2 (dbwls99706/ros2-engineering-skills): same pin as the car repo. Bump both repos together. The plugin ships advisory hooks (opt out: `ROS2_SKILL_DISABLE_HOOKS=all`).
 - asd-ste100 @ master (danyuchn/asd-ste100-skill): STE skill and `ste-lint.py`. Rule: `.claude/rules/writing.md`.
-- ros2-sim @ v1.0.0 (BaraaLazkani/ros2-sim-skill): disabled (`false`). Read its tree (skills and hooks) before you enable it. Enable it after the review. The plugin name `ros2-sim` is not verified.
+- ros2-sim (BaraaLazkani/ros2-sim-skill, tag v1.0.0): not a plugin. At v1.0.0 the repo has only `SKILL.md` and no `.claude-plugin/` manifest (checked 2026-11-11). It is not in settings.json. To adopt it, copy `SKILL.md` at the tag into `.claude/skills/ros2-sim/` and record the tag in dependencies.md. Do this in the sim-gz PR.
 - Never enable a plugin with hooks before you read the hooks.
 
 ## LSP
