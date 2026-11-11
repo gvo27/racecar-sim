@@ -104,7 +104,7 @@ The WSL and GPU lines of `make doctor` print SKIP on this host.
 | Item | Pin |
 |---|---|
 | ROS base | `ros:jazzy-ros-base@sha256:8eed0a4669bbf43ee331878a4c39bd8ebddea8e3312a58b4fae8edb14526b617` (same as the car repo) |
-| Gazebo | Harmonic through `ros-jazzy-ros-gz` 1.0.25 and `gz_sim_vendor` 0.0.13 |
+| Gazebo | Harmonic through `ros-jazzy-ros-gz` 1.0.24 (apt, CI 2026-11-11; rosdistro has 1.0.25, not synced yet) and `gz_sim_vendor` 0.0.13 |
 | Fast DDS | 2.14.7 (not 3.x) |
 | PyTorch image | `pytorch/pytorch:2.15.0-cuda13.2-cudnn9-runtime@sha256:924707fa828f821c9a82d987b405675df6369eee5ce368aece6757b025ffcde5` (gym PR) |
 | f1tenth_gym | branch `v1.0.0` @ `5a301bd` with `gymnasium==0.29.1` (gym PR). Risk: unmaintained since 2024-09 |

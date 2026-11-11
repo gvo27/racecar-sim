@@ -22,7 +22,7 @@ paths:
 | Item | Pin | Note |
 |---|---|---|
 | ROS base | `ros:jazzy-ros-base@sha256:8eed0a4669bbf43ee331878a4c39bd8ebddea8e3312a58b4fae8edb14526b617` | same as car `docker/ros.Dockerfile`; bump both together |
-| Gazebo | `ros-jazzy-ros-gz` 1.0.25 with `gz_sim_vendor` 0.0.13 (Harmonic) | apt version not pinned in the Dockerfile; ros_gz 4.x is for Kilted/Rolling only: do not use |
+| Gazebo | `ros-jazzy-ros-gz` 1.0.24 from packages.ros.org (CI build 2026-11-11; rosdistro release 1.0.25 not synced yet) with `gz_sim_vendor` 0.0.13 (Harmonic). No OSRF apt repo needed (confirmed in CI) | apt version not pinned in the Dockerfile; ros_gz 4.x is for Kilted/Rolling only: do not use |
 | Fast DDS | 2.14.7 (Jazzy fastrtps) | discovery server: `fastdds discovery`; not 3.x |
 | car repo | SHA in `repos/racecar.repos` | bump: `make bump-racecar SHA=` |
 | pyright | npm `pyright` 1.1.414 (`docker/dev.Dockerfile`) | checked 2026-11-11 |

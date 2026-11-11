@@ -5,7 +5,7 @@
 #   test     builder + `colcon test` entrypoint (CI, make sim-test)
 #   runtime  ros-base + ros-gz + runtime deps + /ws/install only (default target)
 # The car repo lands in /ws/src/racecar (read by tests/test_pin.py). The rccar_sim_* packages come in later PRs.
-# ros-gz comes from packages.ros.org. If the first staging build lacks Harmonic, add the OSRF gazebo apt repo (not verified).
+# ros-gz comes from packages.ros.org (Harmonic, gz_sim_vendor 0.0.13; confirmed in CI 2026-11-11). No OSRF apt repo is needed.
 # rosdep needs raw.githubusercontent.com + packages.ros.org. Offline builds only:
 # --build-arg ROSDEP_INSTALL=0 skips rosdep install. Default 1 = real resolution, fails loudly on a bad key.
 
