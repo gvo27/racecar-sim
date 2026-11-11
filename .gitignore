@@ -1,0 +1,17 @@
+# colcon
+build/
+install/
+log/
+src/racecar/
+# python
+__pycache__/
+.pytest_cache/
+.venv/
+# runtime data: runs, bags, maps and datasets stay out of git (public repo)
+runs/
+data/
+*.mcap
+*.db3
+# local config
+.env
+.cache/
