@@ -24,7 +24,7 @@ Facts the next PRs need (details in the plan below):
 - The contract is `docs/sensor_contract.md` in the car repo, with the drift test `deploy/tests/test_contract.py`. Boundary changes follow the car `sim-parity` skill.
 
 Open items:
-- Staging host (Debian, 3550H, 8 GB): the user `callisto` is not in the `docker` group, so local image builds and tests cannot run. Fix: `sudo usermod -aG docker callisto`, then log in again. Disk: 12 GB, about 6 GB free. The sim image is large, so prune often (`docker system df`).
+- Staging host (Debian, 3550H, 8 GB): fixed 2026-11-11. `callisto` is in the `docker` group. A process started before the change (for example the VS Code server or a tmux server) keeps the old groups, so restart it. Local `make sim-test` passed (102 tests). Disk: 36 GB, 30 GB free (checked 2026-11-11). The image store is containerd. `make setup` runs `make prune` (this project only).
 - Node is not installed on the staging host, so the caveman hooks do nothing there. Use `/caveman` to start the mode by hand.
 - CI: on 2026-11-11 the GitHub runner could not resolve `archive.ubuntu.com` in the apt step of both repos. A re-run of the failed jobs passed. If `Could not resolve` shows in the apt step again, re-run before you change code.
 - The LSP shim is not verified with the Claude Code LSP client. Run `make lsp` on a host with docker access first.

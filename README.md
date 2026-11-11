@@ -24,7 +24,7 @@ Host tools: git, make and Docker. Setup steps for the WSL host: [`docs/setup.md`
 
 | Command | What it does |
 |---|---|
-| `make setup` | check host tools, build the sim and dev images |
+| `make setup` | check host tools, build the sim and dev images, remove old project images |
 | `make doctor` | sanity checks (PASS / FAIL / SKIP) |
 | `make sim-test` | build the test image and run colcon test (no GPU) |
 | `make unit` | run `tests/` in the dev image |

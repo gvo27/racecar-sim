@@ -1,7 +1,7 @@
 # path -> role/rules/phase. phase: scaffold = exists now. Planned items carry the PR (branch) name that adds them.
 paths:
   README.md: {role: quick reference (setup, doctor, test, lint, pin-check), phase: scaffold}
-  Makefile: {role: entry point; docker only; targets setup doctor sim-image dev-image sim-test unit lint pin-check bump-racecar lsp, rules: [.claude/rules/dependencies.md, .claude/rules/sim.md], phase: scaffold}
+  Makefile: {role: entry point; docker only; targets setup prune doctor sim-image dev-image sim-test unit lint pin-check bump-racecar lsp, rules: [.claude/rules/dependencies.md, .claude/rules/sim.md], phase: scaffold}
   repos/racecar.repos: {role: vcstool pin of the car repo (40-hex SHA), rules: .claude/rules/sim.md, invariants: ["bump with make bump-racecar", "make pin-check"], phase: scaffold}
   repos/README.md: {role: bump procedure, phase: scaffold}
   docker/sim.Dockerfile: {role: "sim image; stages builder/test/runtime; base = car ROS digest; ros-jazzy-ros-gz; vcs import racecar", rules: .claude/rules/dependencies.md, phase: scaffold}

@@ -30,10 +30,14 @@ cd racecar-sim
 
 ## 3. Build and check
 ```bash
-make setup    # checks host tools, builds the sim and dev images
+make setup    # checks host tools, builds the sim and dev images, removes old project images
 make doctor   # PASS / FAIL / SKIP lines
 ```
 - `make setup` builds `rccar-sim:local` and `rccar-sim-dev:local`. The first build downloads the ROS image and `ros-jazzy-ros-gz`. It takes several minutes.
+- After the build, `make setup` runs `make prune`. It removes the dangling images of this project (label `org.racecar-sim.project=racecar-sim`), so old builds do not fill the disk. It does not touch other images. You can also run `make prune` at any time.
+  - With the classic image store, a rebuild leaves the old image as a dangling image, and `make prune` removes it.
+  - With the containerd image store (the default for new Docker Engine 29 and Docker Desktop installs), a rebuild leaves no dangling image, so `make prune` removes nothing. The old layers stay in the BuildKit build cache. BuildKit garbage collection limits the cache size. `docker info` shows the store: `driver-type io.containerd.snapshotter.v1` is the containerd store.
+  - The build cache is shared by all projects on the host. If you must free it, run `docker builder prune` yourself. It affects every project, so `make` never runs it.
 - `make setup` runs `make lsp` only if `claude` is on PATH, or if you set `LSP=1`.
 - The gym image (several GB) is not part of `make setup`.
 
@@ -77,7 +81,7 @@ The WSL and GPU lines of `make doctor` print SKIP on this host.
 | No `/dev/dxg` | old WSL kernel | `wsl --update` |
 | Nodes do not see each other across hosts | multicast blocked, wrong domain | Use the discovery server (section 6). Check the firewall and `ROS_DOMAIN_ID` |
 | Build is very slow | repo is on `/mnt/c` | Clone into `~/projects` in WSL |
-| Disk is full | Docker images and cache | `docker system df`, then `docker image prune` |
+| Disk is full | Docker images and cache | `docker system df`, then `make prune` (this project only). If "Build Cache" is large: `docker builder prune` (all projects, see section 3) |
 | `ros-jazzy-ros-gz` not found in the build | Harmonic is not in packages.ros.org | Add the OSRF Gazebo apt repo to `docker/sim.Dockerfile` (not verified) |
 
 ## 9. Sanity checks

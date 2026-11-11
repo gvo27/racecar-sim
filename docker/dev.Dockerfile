@@ -4,6 +4,7 @@
 # The repo is mounted at run time (read-only), not copied.
 ARG SIM_BUILDER=rccar-sim-builder:local
 FROM ${SIM_BUILDER}
+LABEL org.racecar-sim.project=racecar-sim
 
 # TODO(bump): check with `npm view pyright version` and `pip index versions ruff` (checked 2026-11-11)
 ARG PYRIGHT_VERSION=1.1.414

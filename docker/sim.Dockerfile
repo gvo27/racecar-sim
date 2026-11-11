@@ -15,6 +15,8 @@ ARG ROS_BASE=ros:jazzy-ros-base@sha256:8eed0a4669bbf43ee331878a4c39bd8ebddea8e33
 ARG ROSDEP_INSTALL=1
 
 FROM ${ROS_BASE} AS builder
+# Label on every project image: make prune removes only dangling images with this label.
+LABEL org.racecar-sim.project=racecar-sim
 ARG ROSDEP_INSTALL
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
@@ -42,8 +44,11 @@ RUN source /opt/ros/jazzy/setup.bash \
       --packages-up-to rccar_bringup rccar_drivers rccar_teleop rccar_description rccar_sim_mcu \
       --cmake-args -DCMAKE_BUILD_TYPE=Release
 
-# package.xml files for the runtime stage (exec deps)
-RUN mkdir -p /ws/pkgxml && cd src && find . -name package.xml -exec cp --parents {} /ws/pkgxml \;
+# package.xml files for the runtime stage (exec deps). Only the packages that colcon finds:
+# colcon list honors COLCON_IGNORE (the car repo firmware/ has a second rccar_msgs for micro-ROS).
+RUN mkdir -p /ws/pkgxml \
+ && colcon list --base-paths src --paths-only \
+    | while read -r p; do cp --parents "$p/package.xml" /ws/pkgxml; done
 
 # --- test: colcon test + results (docker run exit code = test result; /out gets log + xml) --
 FROM builder AS test
@@ -54,6 +59,7 @@ CMD ["/sim-test.sh"]
 
 # --- runtime ------------------------------------------------------------------------------
 FROM ${ROS_BASE} AS runtime
+LABEL org.racecar-sim.project=racecar-sim
 ARG ROSDEP_INSTALL
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive \
