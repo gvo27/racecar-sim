@@ -9,8 +9,9 @@ This file is the plan and the handoff record. The work started in a Claude Code 
 | 1 | car `sim-contract` | `lidar` | PR gvo27/racecar#9. CI green (colcon 320 tests, 0 failures; `make unit` 125 passed). Head c483e39 |
 | 2 | car `dev-lsp` | `main` | not started. Do it in the car repo |
 | 3 | sim `main` | — | pushed (README, .gitignore; no LICENSE, because the car repo has none) |
-| 4 | sim `scaffold` | `main` | PR gvo27/racecar-sim#1. CI green (pin check 13 passed, unit 40 passed, colcon 0 tests: expected) |
-| 5–9 | sim `sim-mcu`, `sim-mapper`, `sim-gz`, `gym`, `racing` | `main` | not started. Start `sim-mcu` after #1 merges |
+| 4 | sim `scaffold` | `main` | merged: PR gvo27/racecar-sim#1 (main 6746bb3). CI was green (pin check 13 passed, unit 40 passed, colcon 0 tests). Correction: colcon test stopped on duplicate package names and `sim-test.sh` ignored the error. The `sim-mcu` PR fixes the script |
+| 5 | sim `sim-mcu` | `main` | in progress (PR to be opened). Plan: `docs/plans/2026-11-11-sim-mcu.md` |
+| 6–9 | sim `sim-mapper`, `sim-gz` (Gazebo), `gym` (f1tenth_gym), `racing` | `main` | not started. Each is a separate PR |
 
 Merge order: racecar #5 → #6 (`lidar`) → #9 (`sim-contract`); racecar-sim #1 at any time. After the car merges, re-pin `repos/racecar.repos` to the car `main` merge SHA with the `sim-bump-pin` skill (`make bump-racecar SHA=<sha>`, then `make pin-check`). The current pin is 3623d3b. It is on a stacked branch, so its history can change before the merge.
 
@@ -23,11 +24,11 @@ Facts the next PRs need (details in the plan below):
 - The contract is `docs/sensor_contract.md` in the car repo, with the drift test `deploy/tests/test_contract.py`. Boundary changes follow the car `sim-parity` skill.
 
 Open items:
-- Staging host (Debian, 3550H, 8 GB): the user `callisto` is not in the `docker` group, so local image builds and tests cannot run. Fix: `sudo usermod -aG docker callisto`, then log in again. Disk: 12 GB, about 6 GB free. The sim image is large, so prune often (`docker system df`).
+- Staging host (Debian, 3550H, 8 GB): fixed 2026-11-11. `callisto` is in the `docker` group. A process started before the change (for example the VS Code server or a tmux server) keeps the old groups, so restart it. Local `make sim-test` passed (102 tests). Disk: 36 GB, 30 GB free (checked 2026-11-11). The image store is containerd. `make setup` runs `make prune` (this project only).
 - Node is not installed on the staging host, so the caveman hooks do nothing there. Use `/caveman` to start the mode by hand.
 - CI: on 2026-11-11 the GitHub runner could not resolve `archive.ubuntu.com` in the apt step of both repos. A re-run of the failed jobs passed. If `Could not resolve` shows in the apt step again, re-run before you change code.
 - The LSP shim is not verified with the Claude Code LSP client. Run `make lsp` on a host with docker access first.
-- Isaac Sim / Isaac Lab: a later PR, after the camera.
+- Isaac Sim / Isaac Lab: postponed until far later: after `racing` and after the camera.
 
 
 ## Context

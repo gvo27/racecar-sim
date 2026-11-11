@@ -1,6 +1,6 @@
 # repos/
 
-`racecar.repos` pins the car repo ([gvo27/racecar](https://github.com/gvo27/racecar)). The sim image runs `vcs import src < repos/racecar.repos`, then builds the car packages with colcon. The car nodes (supervisor, mcu_bridge, drivers) run unchanged in the sim.
+`racecar.repos` pins the car repo ([gvo27/racecar](https://github.com/gvo27/racecar)). The sim image runs `vcs import src < repos/racecar.repos`, then builds the car packages and the sim packages (`rccar_sim_mcu`) with colcon. The car nodes (supervisor, mcu_bridge, drivers) run unchanged in the sim.
 
 The pin is a full 40-character commit SHA. A branch name is not permitted, because it moves.
 

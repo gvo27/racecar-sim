@@ -12,17 +12,19 @@ PYTORCH_IMAGE     ?= pytorch/pytorch:2.15.0-cuda13.2-cudnn9-runtime@sha256:92470
 # STE lint script from the asd-ste100 plugin (advisory); override with STE_LINT=<path>
 STE_LINT          ?= $(firstword $(wildcard $(HOME)/.claude/plugins/cache/asd-ste100-skill/*/*/scripts/ste-lint.py))
 LSP_BIN_DIR       ?= $(HOME)/.local/bin
+# label set in docker/*.Dockerfile; make prune removes only dangling images with it
+PROJECT_LABEL     := org.racecar-sim.project=racecar-sim
 DEV_RUN := docker run --rm -e PYTHONDONTWRITEBYTECODE=1 --user $(shell id -u):$(shell id -g) -v "$(CURDIR)":/work:ro -w /work $(DEV_IMAGE) /entrypoint.sh
 IS_WSL  := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
 
 .DEFAULT_GOAL := help
-.PHONY: help setup doctor sim-image dev-image sim-test sim-test-image sim-test-run unit lint pin-check bump-racecar lsp _need-dev-image
+.PHONY: help setup prune doctorsim-image dev-image sim-test sim-test-image sim-test-run unit lint pin-check bump-racecar lsp _need-dev-image
 
 help:            ## list targets (grouped in README.md)
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  make %-21s %s\n", $$1, $$2}'
 
 # ---- setup ---------------------------------------------------------------------------------
-setup:           ## check host prereqs (git, make, docker + compose/buildx; on WSL also nvidia-smi, WSLg), build the sim + dev images; LSP=1 or claude on PATH also runs make lsp
+setup:           ## check host prereqs (git, make, docker + compose/buildx; on WSL also nvidia-smi, WSLg), build the sim + dev images, make prune; LSP=1 or claude on PATH also runs make lsp
 	@for c in git make docker; do command -v $$c >/dev/null || { echo "MISSING host prerequisite: $$c"; exit 1; }; done
 	@docker compose version >/dev/null 2>&1 || echo "WARN: docker compose plugin missing (needed in a later PR)"
 	@docker buildx version >/dev/null 2>&1 || { echo "MISSING host prerequisite: docker buildx"; exit 1; }
@@ -32,7 +34,11 @@ setup:           ## check host prereqs (git, make, docker + compose/buildx; on W
 	fi
 	$(MAKE) sim-image
 	$(MAKE) dev-image
+	$(MAKE) prune
 	@if [ "$(LSP)" = "1" ] || command -v claude >/dev/null 2>&1; then $(MAKE) lsp; else echo "setup: skip make lsp (claude not on PATH; use LSP=1 to force)"; fi
+
+prune:           ## remove dangling images of this project only (label org.racecar-sim.project); other images stay
+	docker image prune -f --filter "label=$(PROJECT_LABEL)"
 
 doctor:          ## sanity checks with PASS/FAIL/SKIP lines (docs/setup.md "Sanity checks")
 	@IS_WSL="$(IS_WSL)" SIM_IMAGE="$(SIM_IMAGE)" DEV_IMAGE="$(DEV_IMAGE)" PYTORCH_IMAGE="$(PYTORCH_IMAGE)" \

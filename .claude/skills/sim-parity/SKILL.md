@@ -11,10 +11,10 @@ The full checklist and the table of changed paths are in the car repo: `.claude/
 1. Read the car PR "Sim impact" section. It lists the contract rows and the sim artifacts to change.
 2. Bump the pin (skill `sim-bump-pin`).
 3. For each changed contract row, change the matching sim artifact:
-   - ESP32 control, grammar or keys: `rccar_sim_mcu` (planned: sim-mcu PR)
+   - ESP32 control, grammar or keys: `rccar_sim_mcu`
    - Mapper topic, type, frame, QoS or protocol: `rccar_sim_mapper` (planned: sim-mapper PR)
    - URDF or TF: sim wrapper xacro and gz sensor files (planned: sim-gz PR)
-   - supervisor inputs: sim safety check (planned: sim-mcu PR)
+   - supervisor inputs: skill `sim-safety-check`
 4. Run `make sim-test`, `make unit` and `make pin-check`.
 5. Report as "not verified" every step that you did not run.
 

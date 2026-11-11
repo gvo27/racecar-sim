@@ -1,5 +1,5 @@
 {
-  "include": ["tests", "tools"],
+  "include": ["tests", "tools", "rccar_sim_mcu"],
   "exclude": ["**/__pycache__", "build", "runs", "data", "src"],
   "pythonVersion": "3.12",
   "typeCheckingMode": "basic",

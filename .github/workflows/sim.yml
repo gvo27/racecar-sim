@@ -62,6 +62,17 @@ jobs:
           cache-from: type=gha,scope=sim
           cache-to: type=gha,scope=sim,mode=max
 
+      # runtime stage = what make sim-image and make setup build (exec-dep rosdep). Build only.
+      - name: Build sim runtime image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/sim.Dockerfile
+          target: runtime
+          load: false
+          cache-from: type=gha,scope=sim
+          cache-to: type=gha,scope=sim,mode=max
+
       - name: Build dev image
         run: make dev-image
 

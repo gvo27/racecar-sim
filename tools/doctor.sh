@@ -41,6 +41,8 @@ if docker image inspect "$SIM_IMAGE" >/dev/null 2>&1; then
     docker run --rm "$SIM_IMAGE" bash -c 'ros2 pkg list | grep -q ros_gz_bridge'
   check "sim image: rccar_bringup installed" "rebuild: make sim-image" \
     docker run --rm "$SIM_IMAGE" bash -c 'ros2 pkg list | grep -q rccar_bringup'
+  check "sim image: rccar_sim_mcu installed" "rebuild: make sim-image" \
+    docker run --rm "$SIM_IMAGE" bash -c 'ros2 pkg list | grep -q rccar_sim_mcu'
 else
   fail "sim image $SIM_IMAGE" "run make sim-image"
 fi

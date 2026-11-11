@@ -5,6 +5,7 @@ paths:
   - "Makefile"
   - ".claude/hooks/**"
   - "tests/**"
+  - "rccar_sim_*/**"
 ---
 
 # Sim boundary rules
@@ -24,6 +25,6 @@ The sim replaces the car hardware at the device boundary. The car nodes run unch
 10. `make pin-check` must pass before you push a pin change.
 
 ## Images
-- `docker/sim.Dockerfile` stages: `builder` (vcs import, rosdep, colcon), `test` (colcon test), `runtime`. The build covers the car packages `rccar_bringup`, `rccar_drivers`, `rccar_teleop` and `rccar_description` and their dependencies. Sim packages join in later PRs.
+- `docker/sim.Dockerfile` stages: `builder` (vcs import, rosdep, colcon), `test` (colcon test), `runtime`. The build covers the car packages `rccar_bringup`, `rccar_drivers`, `rccar_teleop` and `rccar_description` and their dependencies. The `rccar_sim_mcu` package is built too (sim-mcu PR). The other sim packages join in later PRs.
 - `docker/dev.Dockerfile` builds from the `builder` stage. It adds pyright, ruff and pytest. The repo is mounted at run time, not copied.
 - Compose files come in the sim-gz PR. No compose file exists now.
