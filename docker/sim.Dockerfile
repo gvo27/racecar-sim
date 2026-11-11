@@ -4,7 +4,7 @@
 #   builder  vcs import of repos/racecar.repos + rosdep + colcon build --merge-install -> /ws/install
 #   test     builder + `colcon test` entrypoint (CI, make sim-test)
 #   runtime  ros-base + ros-gz + runtime deps + /ws/install only (default target)
-# The car repo lands in /ws/src/racecar (read by tests/test_pin.py). The rccar_sim_* packages come in later PRs.
+# The car repo lands in /ws/src/racecar (read by tests/test_pin.py). The rccar_sim_mcu package is copied next to it; other rccar_sim_* packages come in later PRs.
 # ros-gz comes from packages.ros.org (Harmonic, gz_sim_vendor 0.0.13; confirmed in CI 2026-11-11). No OSRF apt repo is needed.
 # rosdep needs raw.githubusercontent.com + packages.ros.org. Offline builds only:
 # --build-arg ROSDEP_INSTALL=0 skips rosdep install. Default 1 = real resolution, fails loudly on a bad key.
@@ -27,6 +27,7 @@ RUN apt-get update \
 
 COPY repos/ repos/
 RUN mkdir -p src && vcs import src < repos/racecar.repos
+COPY rccar_sim_mcu/ src/rccar_sim_mcu/
 
 RUN if [ "${ROSDEP_INSTALL}" = "1" ]; then \
       rosdep update --rosdistro jazzy \
@@ -35,10 +36,10 @@ RUN if [ "${ROSDEP_INSTALL}" = "1" ]; then \
       && rm -rf /var/lib/apt/lists/*; \
     else echo "WARN: ROSDEP_INSTALL=0, skipping rosdep install (offline build)"; fi
 
-# Car packages only. Sim packages join this list in later PRs.
+# Car packages and rccar_sim_mcu. Other sim packages join this list in later PRs.
 RUN source /opt/ros/jazzy/setup.bash \
  && colcon build --merge-install --event-handlers console_cohesion+ \
-      --packages-up-to rccar_bringup rccar_drivers rccar_teleop rccar_description \
+      --packages-up-to rccar_bringup rccar_drivers rccar_teleop rccar_description rccar_sim_mcu \
       --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 # package.xml files for the runtime stage (exec deps)

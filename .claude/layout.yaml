@@ -11,10 +11,11 @@ paths:
   docker/gym.Dockerfile: {role: pytorch digest + pinned lock + f1tenth_gym, planned: gym}
   tools/lsp/: {role: "pyright-langserver docker shim + smoke.py (LSP initialize test)", rules: .claude/rules/claude-tooling.md, phase: scaffold}
   tools/doctor.sh: {role: make doctor checks (PASS/FAIL/SKIP), rules: .claude/rules/wsl.md, phase: scaffold}
-  tests/: {role: "pytest in the dev image: test_pin, test_rules_paths, test_sim_guard", phase: scaffold}
+  tests/: {role: "pytest in the dev image: test_pin, test_rules_paths, test_sim_guard, test_drive_publisher", phase: scaffold}
   pyrightconfig.json: {role: pyright config (root; missing imports = warning), rules: .claude/rules/claude-tooling.md, phase: scaffold}
   ruff.toml: {role: ruff config, phase: scaffold}
   docs/plans/2026-11-10-sim-scaffold.md: {role: approved sim plan + handoff status (PR split, open items), phase: scaffold}
+  docs/plans/2026-11-11-sim-mcu.md: {role: sim-mcu plan (virtual ESP32 design, tasks, verification), phase: sim-mcu}
   docs/setup.md: {role: WSL host setup, training, sanity checks, versions, rules: .claude/rules/wsl.md, phase: scaffold}
   .github/workflows/sim.yml: {role: ci: build, sim-test, pin-check, unit; no gpu, rules: .claude/rules/claude-tooling.md, phase: scaffold}
   .claude/: {role: CLAUDE.md, layout.yaml, rules, agents, skills, hooks, settings.json, phase: scaffold}
@@ -22,14 +23,15 @@ paths:
   .claude/agents/sim-reviewer.md: {role: reviews diffs vs rules + sim safety checks, phase: scaffold}
   .claude/skills/wsl-docker-ros2/: {role: WSL + Docker Desktop + ROS 2 knowledge skill, phase: scaffold}
   .claude/skills/sim-parity/: {role: stub; points to the car skill + sim-side steps, phase: scaffold}
+  .claude/skills/sim-safety-check/: {role: safety checks for policies, planners and fault tests, phase: sim-mcu}
   .claude/skills/sim-bump-pin/: {role: procedure to bump the car pin, phase: scaffold}
   compose.yaml: {role: gz, mcu-sim, mapper-sim, core, drivers, foxglove, gym; profiles, planned: sim-gz}
   dds/: {role: Fast DDS 2.14 discovery server profile, planned: sim-gz}
-  rccar_sim_mcu/: {role: virtual ESP32 (model + node), planned: sim-mcu}
+  rccar_sim_mcu/: {role: "virtual ESP32 (model + node rccar_mcu, launch sim_mcu.launch.py)", rules: .claude/rules/sim.md, phase: sim-mcu}
   rccar_sim_mapper/: {role: virtual Mapper TCP server, planned: sim-mapper}
   rccar_sim_gz/: {role: Gazebo world, bridge config, planned: sim-gz}
   rccar_sim_bringup/: {role: sim launch files, planned: sim-gz}
   rccar_gym/: {role: gymnasium env, configs, train.py (no ROS), planned: gym}
   rccar_racing/: {role: follow_the_gap, wall_follow, benchmark; output only on /rccar/cmd/captain, planned: racing}
   datasets/: {role: public dataset index; no data in git, planned: gym}
-planned_skills: {sim-safety-check: sim-mcu, new-sim-sensor: sim-mapper, gazebo-robotics: sim-gz, robotics-simulation-validation: sim-gz, f1tenth-racing: gym, autonomous-racing-algorithms: racing}
+planned_skills: {new-sim-sensor: sim-mapper, gazebo-robotics: sim-gz, robotics-simulation-validation: sim-gz, f1tenth-racing: gym, autonomous-racing-algorithms: racing}

@@ -93,6 +93,7 @@ The WSL and GPU lines of `make doctor` print SKIP on this host.
 | `docker run --rm --gpus all pytorch/pytorch:2.15.0-cuda13.2-cudnn9-runtime@sha256:924707fa828f821c9a82d987b405675df6369eee5ce368aece6757b025ffcde5 nvidia-smi` | table with the RTX 5070 Ti and CUDA version 13.2 or newer (not verified) |
 | `docker run --rm rccar-sim:local gz sim --versions` | 8.x (Harmonic) (not verified) |
 | `docker run --rm rccar-sim:local bash -c 'ros2 pkg list \| grep ros_gz_bridge'` | `ros_gz_bridge` (not verified) |
+| `docker run --rm rccar-sim:local bash -c 'ros2 pkg list \| grep rccar_sim_mcu'` | `rccar_sim_mcu` (not verified) |
 | `ls /mnt/wslg /dev/dxg` | both paths exist |
 | `make pin-check` | `passed` for all tests |
 | `make doctor` | no `FAIL` line |
